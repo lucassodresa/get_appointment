@@ -1,0 +1,33 @@
+{
+  "name": "get_appointment",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "workspaces": [
+    "server",
+    "web",
+    "shared"
+  ],
+  "repository": "https://github.com/lucassodresa/get_appointment.git",
+  "author": "<lucas.sodresa@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "server:dev": "cd server && yarn dev",
+    "web:dev": "cd web && yarn start",
+    "dev": "concurrently \"yarn server:dev\" \"yarn web:dev\"",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@get_appointment/shared": "*"
+  },
+  "devDependencies": {
+    "concurrently": "^7.1.0",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-json": "^3.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.4.0",
+    "prettier": "^2.6.2"
+  }
+}
