@@ -1,7 +1,3 @@
-const eslintConfig = require('./eslintConfig');
-const prettierConfig = require('./prettierConfig');
+const USER = require('./schemas/user.js');
 
-module.exports = {
-  eslintConfig,
-  prettierConfig
-};
+exports.SCHEMAS = { USER };

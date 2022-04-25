@@ -4,25 +4,28 @@
   "private": true,
   "dependencies": {
     "@get_appointment/shared": "*",
-    "@testing-library/jest-dom": "^5.16.4",
-    "@testing-library/react": "^13.1.1",
-    "@testing-library/user-event": "^13.5.0",
+    "@hookform/resolvers": "^2.8.8",
+    "antd": "^4.19.5",
+    "antd-img-crop": "^4.2.0",
+    "axios": "^0.26.1",
+    "dotenv": "^16.0.0",
+    "http-status-code": "^2.1.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-hook-form": "^7.30.0",
+    "react-image-crop": "^10.0.0",
+    "react-query": "^3.38.0",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
+    "recoil": "^0.7.2",
+    "styled-components": "^5.3.5"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:staging": "env-cmd -f .env.staging yarn build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
@@ -37,11 +40,15 @@
     ]
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.17.0",
     "babel-eslint": "^10.1.0",
+    "env-cmd": "^10.1.0",
     "eslint": "^8.14.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-json": "^3.1.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.29.4",
+    "eslint-plugin-react-hooks": "^4.4.0",
     "prettier": "^2.6.2"
   }
 }

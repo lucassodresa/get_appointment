@@ -1,2 +1,9 @@
-const { prettierConfig } = require("@get_appointment/shared");
-module.exports = prettierConfig;
+module.exports = {
+  tabWidth: 2,
+  useTabs: false,
+  printWidth: 80,
+  semi: true,
+  singleQuote: true,
+  trailingComma: 'none',
+  endOfLine: 'auto'
+};

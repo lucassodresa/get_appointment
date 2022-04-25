@@ -1,7 +1,6 @@
 {
-    "verbose": true,
-    "watch": ["."],
-    "ext": "js,json",
-    "delay": 1500
-  }
-  
+  "verbose": true,
+  "watch": ["."],
+  "ext": "js,json",
+  "delay": 1500
+}

@@ -1,6 +1,10 @@
 {
   "name": "@get_appointment/shared",
   "version": "1.0.0",
+  "private": true,
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "yup": "^0.32.11"
+  }
 }
