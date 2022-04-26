@@ -1,5 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
+
 const UserModel = require('../models/UserModel');
+const { uploadFile } = require('../utils/s3');
 
 const getMe = async (req, res) => {
   try {
@@ -34,4 +36,21 @@ const getUsers = async (req, res) => {
   }
 };
 
-module.exports = { getMe, getUsers };
+const editAvatar = async (req, res) => {
+  try {
+    const file = req.file;
+    const result = await uploadFile(file);
+    // eslint-disable-next-line no-console
+    console.log(result);
+
+    return res.status(StatusCodes.OK).jsend.success({
+      ok: true
+    });
+  } catch (error) {
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .jsend.error({ message: error });
+  }
+};
+
+module.exports = { getMe, getUsers, editAvatar };
