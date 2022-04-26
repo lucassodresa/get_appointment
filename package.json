@@ -18,9 +18,11 @@
     "web:dev": "yarn workspace @get_appointment/web start",
     "dev": "concurrently \"yarn web:dev\" \"yarn server:dev\" ",
     "test": "yarn workspace @get_appointment/server test",
-    "lint": "yarn workspaces run lint",
+    "server:lint": "yarn workspace @get_appointment/server lint",
+    "web:lint": "yarn workspace @get_appointment/web lint",
+    "lint": "yarn server:lint && yarn web:lint",
     "prepare": "husky install",
-    "heroku-postbuild": "yarn web:build-staging"
+    "heroku-postbuild": "yarn test && yarn web:build-staging"
   },
   "devDependencies": {
     "concurrently": "^7.1.0",
