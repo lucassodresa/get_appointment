@@ -18,6 +18,7 @@
     "web:dev": "yarn workspace @get_appointment/web start",
     "dev": "concurrently \"yarn web:dev\" \"yarn server:dev\" ",
     "test": "yarn workspace @get_appointment/server test",
+    "lint": "yarn workspaces run lint",
     "prepare": "husky install",
     "heroku-postbuild": "yarn web:build-staging"
   },
