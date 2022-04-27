@@ -1,11 +1,11 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Node.js CI
+name: NodeJS CI dev
 
 on:
   push:
-    branches: [master]
+    branches: [dev]
 
 jobs:
   ci:
@@ -28,7 +28,14 @@ jobs:
       - name: Testing
         run: yarn test
 
-  # cd:
-  #   needs: ci
-  #   runs-on: ubuntu-latest
-  #   steps:
+  cd:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add remote origin
+        if: github.ref == 'refs/heads/dev' && job.status == 'success'
+        run: |
+          git remote add heroku https://heroku:${{ secrets.HEROKU_API_KEY }}@git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git
+      - name: Deploy to Heroku
+        run: |
+          git push heroku HEAD:master -f
