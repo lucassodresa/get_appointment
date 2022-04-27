@@ -6,8 +6,10 @@ const router = express.Router();
 // imports
 const auth = require('./auth');
 const users = require('./users');
+// const static = require('./static');
 // public routes
 router.use('/auth', auth);
+// router.use('/static', static);
 
 router.use(Middleware.validateToken);
 
