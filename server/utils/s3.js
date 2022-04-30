@@ -23,9 +23,10 @@ const uploadFile = (file) => {
   return s3.upload(uploadParams).promise();
 };
 
-const getFileStream = (fileKey) => {
-  const downloadParams = { Key: fileKey, Bucket: bucketName };
-  s3.getObject(downloadParams).createReadStream();
+const getSignedUrl = (Key) => {
+  const signedUrlParams = { Key, Bucket: AWS_BUCKET_NAME, Expires: 60 * 5 };
+  const url = s3.getSignedUrl('getObject', signedUrlParams);
+  return url;
 };
 
-module.exports = { uploadFile, getFileStream };
+module.exports = { uploadFile, getSignedUrl };

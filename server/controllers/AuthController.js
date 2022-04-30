@@ -1,11 +1,17 @@
 const bcrypt = require('bcryptjs');
 const { StatusCodes } = require('http-status-codes');
+const fs = require('fs');
+const util = require('util');
 const UserModel = require('../models/UserModel');
 const { generateToken } = require('../utils/authentication');
+const { uploadFile } = require('../utils/s3');
+
+const unlinkFile = util.promisify(fs.unlink);
 
 const signUp = async (req, res) => {
   try {
     const body = req.body;
+    const file = req.file;
 
     const alreadyExistUserEmail = await UserModel.findOne({
       email: body.email
@@ -16,6 +22,12 @@ const signUp = async (req, res) => {
         .jsend.fail({ message: 'Email already exist.' });
     }
 
+    if (file) {
+      const result = await uploadFile(req.file);
+      await unlinkFile(file.path);
+
+      if (result.Key) body.avatar = result.Key;
+    }
     const user = new UserModel({ ...body });
 
     await user.save();
@@ -24,6 +36,9 @@ const signUp = async (req, res) => {
       message: 'User created!'
     });
   } catch (error) {
+    const file = req.file;
+    if (file) await unlinkFile(file.path);
+    console.log(error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .jsend.error({ message: error });
