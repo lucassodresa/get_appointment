@@ -38,7 +38,6 @@ const signUp = async (req, res) => {
   } catch (error) {
     const file = req.file;
     if (file) await unlinkFile(file.path);
-    console.log(error);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .jsend.error({ message: error });
