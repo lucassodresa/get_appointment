@@ -1,6 +1,7 @@
 const { Schema, model } = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const bcrypt = require('bcryptjs');
+const { getSignedUrl } = require('../utils/s3');
 
 const UserSchema = new Schema(
   {
@@ -31,11 +32,16 @@ const UserSchema = new Schema(
       },
       default: 2
     },
-    avatar: String
+    avatar: {
+      type: String,
+      get: (avatarId) => getSignedUrl(avatarId)
+    }
   },
   {
     collection: 'users',
-    timestamps: true
+    timestamps: true,
+    toObject: { getters: true },
+    toJSON: { getters: true }
   }
 );
 
