@@ -49,7 +49,7 @@ const useAxios = (props) => {
   const { mutate, isLoading } = useMutation(authService.validateToken(api), {
     onSuccess: () => {
       setIsLoggedIn(true);
-      navigate('/users');
+      navigate(-1);
     },
     onError: () => logout()
   });

@@ -8,6 +8,9 @@ import GlobalLoading from './shared/GlobalLoading';
 import SignUp from './pages/Auth/Signup';
 import SignIn from './pages/Auth/SignIn';
 import ProtectedRoute from './shared/ProtectedRoute';
+import Profile from './pages/Private/Profile';
+import Services from './pages/Private/Services';
+import Appointments from './pages/Private/Appointments';
 
 const Container = styled.div`
   background: ${(props) => (props.isLoggedIn ? '#F2F2F2' : '#fff')};
@@ -33,13 +36,13 @@ function App() {
           element={isLoggedIn ? <Navigate to="/" /> : <SignIn />}
         />
         <Route path="/" element={<ProtectedRoute />}>
-          {/* <Route index element={<Navigate to="/users" />} /> */}
-          {/* <Route index path="/users" element={<Users />} />
-          <Route path="/games">
-            <Route index element={<Games />} />
-            <Route path=":roomId" element={<Game />} />
-          </Route> */}
-          <Route path="/profile" element={<h1>Profile</h1>} />
+          <Route index element={<Navigate to="/appointments" />} />
+
+          <Route path="/appointments" element={<Appointments />} />
+
+          <Route path="/services" element={<Services />} />
+
+          <Route path="/profile" element={<Profile />} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>

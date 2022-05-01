@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { queryClient } from './services/queryClient';
 import 'antd/dist/antd.css';
+import GlobalStyle from './styles/global';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -13,6 +14,7 @@ root.render(
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
+          <GlobalStyle />
           <App />
         </BrowserRouter>
       </QueryClientProvider>

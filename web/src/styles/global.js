@@ -1,6 +1,13 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle, keyframes } from 'styled-components';
 
-export default createGlobalStyle`
+const animationLeft = keyframes`
+to {
+    opacity: 1;
+    transform: initial;
+  }
+`;
+
+const GlobalStyle = createGlobalStyle`
 
 body {
   font-family: 'Lato', sans-serif;
@@ -14,13 +21,9 @@ body {
 .animationLeft {
   opacity: 0;
   transform: translateX(-20px);
-  animation: animationLeft 0.3s forwards;
+  animation: ${animationLeft}  0.3s forwards;
 }
 
-@keyframes animationLeft {
-  to {
-    opacity: 1;
-    transform: initial;
-  }
-}
 `;
+
+export default GlobalStyle;

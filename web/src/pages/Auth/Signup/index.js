@@ -46,9 +46,6 @@ const SignUp = () => {
     formData.append('password', password);
     formData.append('avatar', avatarList[0].originFileObj);
 
-    // console.log(data);
-    // console.log(avatarList[0]);
-
     mutate(formData);
   };
 
