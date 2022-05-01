@@ -12,13 +12,14 @@ import Title from '../../../shared/Title';
 import Paragraph from '../../../shared/Paragraph';
 import Button from '../../../shared/Button';
 import Form from '../../../shared/Form';
-// import ImgCrop from 'antd-img-crop';
-// import { Upload } from 'antd';
-// import 'react-image-crop/dist/ReactCrop.css';
-// import { useState } from 'react';
+import ImgCrop from 'antd-img-crop';
+import { Upload } from 'antd';
+import 'react-image-crop/dist/ReactCrop.css';
+import { useState } from 'react';
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const [avatarList, setAvatarList] = useState([]);
   const {
     handleSubmit,
     control,
@@ -37,35 +38,47 @@ const SignUp = () => {
     onError: ({ response: { data } }) =>
       notifyError('Sign up', data?.data?.message)
   });
-  // const [avatarList, setAvatarList] = useState([]);
 
-  // const dummyRequest = ({ file, onSuccess }) => {
-  //   setTimeout(() => {
-  //     onSuccess('ok');
-  //   }, 0);
-  // };
+  const onSubmit = ({ name, email, password }) => {
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('avatar', avatarList[0].originFileObj);
 
-  // const onPreview = async (file) => {
-  //   let src = file.url;
-  //   if (!src) {
-  //     src = await new Promise((resolve) => {
-  //       const reader = new FileReader();
-  //       reader.readAsDataURL(file.originFileObj);
-  //       reader.onload = () => resolve(reader.result);
-  //     });
-  //   }
-  //   const image = new Image();
-  //   image.src = src;
-  //   const imgWindow = window.open(src);
-  //   imgWindow.document.write(image.outerHTML);
-  // };
+    // console.log(data);
+    // console.log(avatarList[0]);
+
+    mutate(formData);
+  };
+
+  const dummyRequest = ({ file, onSuccess }) => {
+    setTimeout(() => {
+      onSuccess('ok');
+    }, 0);
+  };
+
+  const onPreview = async (file) => {
+    let src = file.url;
+    if (!src) {
+      src = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file.originFileObj);
+        reader.onload = () => resolve(reader.result);
+      });
+    }
+    const image = new Image();
+    image.src = src;
+    const imgWindow = window.open(src);
+    imgWindow.document.write(image.outerHTML);
+  };
 
   return (
     <StyledSection>
       <Title>Sign Up</Title>
       <Paragraph marginBottom="52px">Access the app by signing up</Paragraph>
-      <Form onSubmit={handleSubmit(mutate)}>
-        {/* <ImgCrop shape="round">
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <ImgCrop shape="round">
           <Upload
             onChange={({ fileList }) => setAvatarList([...fileList.slice(-1)])}
             onPreview={onPreview}
@@ -75,7 +88,7 @@ const SignUp = () => {
           >
             + Add Avatar
           </Upload>
-        </ImgCrop> */}
+        </ImgCrop>
 
         <Input
           name="name"
