@@ -9,7 +9,12 @@ const AvatarContainer = () => {
 
   return (
     <StyledAvatarContainer>
-      <StyledAvatar size={75}>{userInfo?.name?.[0]}</StyledAvatar>
+      {userInfo?.avatar ? (
+        <StyledAvatar size={75} src={userInfo?.avatar} />
+      ) : (
+        <StyledAvatar size={75}>{userInfo?.name?.[0]}</StyledAvatar>
+      )}
+
       <StyledName>{userInfo?.name}</StyledName>
       <Link to="/profile">Profile</Link>
     </StyledAvatarContainer>
