@@ -39,7 +39,7 @@ function App() {
             <Route index element={<Games />} />
             <Route path=":roomId" element={<Game />} />
           </Route> */}
-          <Route path="/profile" element={<h1>Profile dev</h1>} />
+          <Route path="/profile" element={<h1>Profile</h1>} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
