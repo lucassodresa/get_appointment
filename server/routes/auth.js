@@ -14,6 +14,17 @@ router.get(
 );
 
 router.post(
+  '/signup/company',
+  upload.fields([
+    { name: 'avatar', maxCount: 1 },
+    { name: 'background', maxCount: 1 },
+    { name: 'photos' }
+  ]),
+  Middleware.validateBody(SCHEMAS.COMPANY.SIGNUP),
+  AuthController.signUpCompany
+);
+
+router.post(
   '/signup',
   upload.single('avatar'),
   Middleware.validateBody(SCHEMAS.USER.SIGNUP),
