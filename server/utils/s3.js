@@ -1,6 +1,7 @@
 require('dotenv').config();
 const fs = require('fs');
 const { S3 } = require('aws-sdk');
+const util = require('util');
 
 const { AWS_BUCKET_NAME, AWS_BUCKET_REGION, AWS_ACCESS_KEY, AWS_SECRET_KEY } =
   process.env;
@@ -29,4 +30,6 @@ const getSignedUrl = (Key) => {
   return url;
 };
 
-module.exports = { uploadFile, getSignedUrl };
+const unlinkFile = util.promisify(fs.unlink);
+
+module.exports = { uploadFile, getSignedUrl, unlinkFile };
