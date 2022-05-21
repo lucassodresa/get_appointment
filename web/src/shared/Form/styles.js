@@ -1,7 +1,8 @@
+import { Form } from 'antd';
 import styled from 'styled-components';
 import { device } from '../../constants/mediaQueries';
 
-const StyledForm = styled.form`
+const StyledForm = styled(Form)`
   margin-left: auto;
   margin-right: auto;
   max-width: 400px;

@@ -128,6 +128,7 @@ const signUpCompany = async (req, res) => {
       name,
       email,
       password,
+      ...(body.avatar && { avatar: body.avatar }),
       role: 3
     });
 
@@ -143,8 +144,6 @@ const signUpCompany = async (req, res) => {
       location: { type: 'Point', coordinates: location },
       ...(body.photos && { photos: body.photos })
     });
-    await user.save();
-    await company.save();
 
     // 6-
     // send email to user and to admin
