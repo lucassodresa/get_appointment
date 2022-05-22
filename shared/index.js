@@ -1,3 +1,4 @@
-const USER = require('./schemas/user.js');
+const SCHEMAS = require('./schemas');
+const GLOBALS = require('./globals');
 
-exports.SCHEMAS = { USER };
+module.exports = { GLOBALS, SCHEMAS };

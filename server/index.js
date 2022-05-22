@@ -26,6 +26,10 @@ app.use('/api', routes);
 if (isProd || isStaging) {
   app.use(express.static('../web/build'));
 
+  app.get('/favicon.ico', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '..', 'web', 'build', '/favicon.ico'));
+  });
+
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, '..', 'web', 'build', 'index.html'));
   });

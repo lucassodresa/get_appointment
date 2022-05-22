@@ -1,6 +1,8 @@
 const { Schema, model } = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 const bcrypt = require('bcryptjs');
+const { getSignedUrl } = require('../utils/s3');
+const { GLOBALS } = require('@get_appointment/shared');
 
 const UserSchema = new Schema(
   {
@@ -26,16 +28,21 @@ const UserSchema = new Schema(
     role: {
       type: Number,
       validate: {
-        validator: (value) => [1, 2].includes(value),
+        validator: (value) => Object.values(GLOBALS.USER.ROLES).includes(value),
         message: '{VALUE} is not a valid type'
       },
-      default: 2
+      default: GLOBALS.USER.ROLES.NORMAL
     },
-    avatar: String
+    avatar: {
+      type: String,
+      get: (avatarId) => avatarId && getSignedUrl(avatarId)
+    }
   },
   {
     collection: 'users',
-    timestamps: true
+    timestamps: true,
+    toObject: { getters: true },
+    toJSON: { getters: true }
   }
 );
 

@@ -1,7 +1,7 @@
 module.exports = {
   extends: ['prettier', 'plugin:json/recommended'],
   parserOptions: {
-    ecmaVersion: 9
+    ecmaVersion: 2020
   },
   plugins: ['prettier'],
   rules: {
@@ -10,6 +10,7 @@ module.exports = {
     'no-unused-vars': 'error',
     'no-delete-var': 'error',
     'no-console': 'warn',
+    'no-unsafe-optional-chaining': 'off',
     'prefer-const': [
       'error',
       {

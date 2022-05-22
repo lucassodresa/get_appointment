@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useSetRecoilState } from 'recoil';
-import { TeamOutlined, RocketOutlined } from '@ant-design/icons';
+import { CalendarOutlined, FileSearchOutlined } from '@ant-design/icons';
 import { Outlet } from 'react-router-dom';
 import useAxios from '../../hooks/useAxios';
 import { loggedUserInfoState } from '../../recoil/user';
@@ -11,8 +11,8 @@ import SideNav from '../SideNav';
 import Menu from '../Menu';
 
 const items = [
-  { to: '/users', icon: <TeamOutlined />, name: 'Users' },
-  { to: '/games', icon: <RocketOutlined />, name: 'Games' }
+  { to: '/appointments', icon: <CalendarOutlined />, name: 'Appointments' },
+  { to: '/services', icon: <FileSearchOutlined />, name: 'Services' }
 ];
 
 const Layout = () => {
@@ -21,7 +21,12 @@ const Layout = () => {
   const setLoggedUserInfo = useSetRecoilState(loggedUserInfoState);
 
   useEffect(() => {
-    data && setLoggedUserInfo(data?.data?.user);
+    data &&
+      setLoggedUserInfo((prevState) => {
+        const { user } = data?.data;
+
+        return user;
+      });
   }, [data, setLoggedUserInfo]);
   return (
     <StyledLayout>
