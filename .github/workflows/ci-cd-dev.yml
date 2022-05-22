@@ -28,7 +28,7 @@ jobs:
 
   cd:
     needs: ci
-     runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -40,4 +40,3 @@ jobs:
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME_PROD }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
           branch: dev
-
