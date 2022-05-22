@@ -69,10 +69,10 @@ const CompanyForm = () => {
     formData.append('nif', nif);
     formData.append('phone', phone);
     location.forEach((item) => formData.append('location', item));
-    if (avatar.length !== 0) formData.append('avatar', avatar[0].originFileObj);
-    if (background.length !== 0)
+    if (avatar?.length) formData.append('avatar', avatar[0].originFileObj);
+    if (background?.length)
       formData.append('background', background[0].originFileObj);
-    if (photos.length !== 0)
+    if (photos?.length)
       photos.forEach((photo) => formData.append('photos', photo.originFileObj));
 
     mutate(formData);
