@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SCHEMAS } from '@get_appointment/shared';
 import { useMutation } from 'react-query';
@@ -13,20 +13,26 @@ import Input from '../../../../../shared/Input';
 import Button from '../../../../../shared/Button';
 import Form from '../../../../../shared/Form';
 import ImgCrop from 'antd-img-crop';
-import { Upload, Form as FormAntd } from 'antd';
+import { Upload, Form as FormAntd, Modal } from 'antd';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useState } from 'react';
 import Paragraph from '../../../../../shared/Paragraph';
 import { StyledLink } from '../../../styles';
 import { UploadOutlined } from '@ant-design/icons';
-import { dummyRequest } from '../../../../../constants/global';
+import { dummyRequest, getBase64 } from '../../../../../constants/global';
 
 const UserForm = () => {
   const navigate = useNavigate();
-  const [avatarList, setAvatarList] = useState([]);
+  const [previewState, setPreviewState] = useState({
+    isVisible: false,
+    image: '',
+    title: ''
+  });
+
   const {
     handleSubmit,
     control,
+    setValue,
     formState: { errors }
   } = useForm({
     resolver: yupResolver(SCHEMAS.USER.SIGNUP),
@@ -43,31 +49,28 @@ const UserForm = () => {
       notifyError('Sign up', data?.data?.message)
   });
 
-  const onSubmit = ({ name, email, password }) => {
+  const onSubmit = ({ name, email, password, avatar }) => {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);
     formData.append('password', password);
-    if (avatarList.length !== 0)
-      formData.append('avatar', avatarList[0].originFileObj);
+    if (avatar.length !== 0) formData.append('avatar', avatar[0].originFileObj);
 
     mutate(formData);
   };
 
-  const onPreview = async (file) => {
-    let src = file.url;
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj);
-        reader.onload = () => resolve(reader.result);
-      });
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
     }
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow.document.write(image.outerHTML);
+    setPreviewState({
+      image: file.url || file.preview,
+      isVisible: true,
+      title: file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
+    });
   };
+
+  const handleCancel = () => setPreviewState({ isVisible: false });
 
   return (
     <Form
@@ -76,19 +79,41 @@ const UserForm = () => {
       onFinish={handleSubmit(onSubmit)}
       autoComplete="off"
     >
-      <FormAntd.Item label="Avatar">
-        <ImgCrop shape="round">
-          <Upload
-            onChange={({ fileList }) => setAvatarList([...fileList.slice(-1)])}
-            onPreview={onPreview}
-            customRequest={dummyRequest}
-            listType="picture"
-            fileList={avatarList}
-          >
-            <Button icon={<UploadOutlined />}>Upload</Button>
-          </Upload>
-        </ImgCrop>
-      </FormAntd.Item>
+      <Controller
+        control={control}
+        name="avatar"
+        render={({ field: { value } }) => {
+          return (
+            <FormAntd.Item
+              label="Avatar"
+              help={errors?.avatar?.message}
+              hasFeedback
+              tooltip="Max size: 1mb"
+              validateStatus={
+                (value || errors?.avatar) &&
+                (errors?.avatar ? 'error' : 'success')
+              }
+            >
+              <ImgCrop shape="round">
+                <Upload
+                  onChange={({ fileList }) => {
+                    setValue('avatar', [...fileList], {
+                      shouldValidate: true
+                    });
+                  }}
+                  onPreview={handlePreview}
+                  customRequest={dummyRequest}
+                  listType="picture"
+                  fileList={value}
+                  maxCount={1}
+                >
+                  <Button icon={<UploadOutlined />}>Upload</Button>
+                </Upload>
+              </ImgCrop>
+            </FormAntd.Item>
+          );
+        }}
+      />
 
       <Input name="name" label="Name" control={control} error={errors.name} />
 
@@ -122,6 +147,14 @@ const UserForm = () => {
       <StyledLink className="ant-btn ant-btn-block" to={'/signin'}>
         Sign In
       </StyledLink>
+      <Modal
+        visible={previewState.isVisible}
+        title={previewState.title}
+        footer={null}
+        onCancel={handleCancel}
+      >
+        <img alt="Preview" style={{ width: '100%' }} src={previewState.image} />
+      </Modal>
     </Form>
   );
 };

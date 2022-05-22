@@ -3,7 +3,9 @@ const { SCHEMAS } = require('@get_appointment/shared');
 const AuthController = require('../controllers/AuthController');
 const Middleware = require('../middleware');
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({
+  dest: 'uploads/'
+});
 
 const router = express.Router();
 
@@ -20,13 +22,15 @@ router.post(
     { name: 'background', maxCount: 1 },
     { name: 'photos' }
   ]),
+  Middleware.fileFieldsToBody,
   Middleware.validateBody(SCHEMAS.COMPANY.SIGNUP),
   AuthController.signUpCompany
 );
 
 router.post(
   '/signup',
-  upload.single('avatar'),
+  upload.fields([{ name: 'avatar', maxCount: 1 }]),
+  Middleware.fileFieldsToBody,
   Middleware.validateBody(SCHEMAS.USER.SIGNUP),
   AuthController.signUp
 );

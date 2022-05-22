@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SCHEMAS } from '@get_appointment/shared';
 import { useMutation } from 'react-query';
@@ -13,35 +13,28 @@ import Input from '../../../../../shared/Input';
 import Button from '../../../../../shared/Button';
 import Form from '../../../../../shared/Form';
 import ImgCrop from 'antd-img-crop';
-import { Upload, Form as FormAntd } from 'antd';
+import { Upload, Form as FormAntd, Modal } from 'antd';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useEffect, useState } from 'react';
 import Paragraph from '../../../../../shared/Paragraph';
 import { StyledLink } from '../../../styles';
 import { UploadOutlined } from '@ant-design/icons';
-import {
-  MapContainer,
-  TileLayer,
-  useMapEvents,
-  Marker,
-  useMap
-} from 'react-leaflet';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import Control from 'react-leaflet-control';
-import { dummyRequest } from '../../../../../constants/global';
-import StyledButton from '../../../../../shared/Button/styles';
-
+import { dummyRequest, getBase64 } from '../../../../../constants/global';
+import LocationMap from './components/LocationMap';
+import SearchMapInput from './components/SearchMapInput';
 const CompanyForm = () => {
   const navigate = useNavigate();
-  const [avatarList, setAvatarList] = useState([]);
-  const [backgroundList, setBackgroundList] = useState([]);
-  const [photosList, setPhotosList] = useState([]);
+  const [mapInstance, setMapInstance] = useState(null);
   const [location, setLocation] = useState(null);
-  const [map, setMap] = useState(null);
+  const [previewState, setPreviewState] = useState({
+    isVisible: false,
+    image: '',
+    title: ''
+  });
   const {
     handleSubmit,
     control,
+    setValue,
     formState: { errors }
   } = useForm({
     resolver: yupResolver(SCHEMAS.COMPANY.SIGNUP),
@@ -49,7 +42,7 @@ const CompanyForm = () => {
   });
 
   const { api } = useAxios();
-  const { mutate, isLoading } = useMutation(authService.signUp(api), {
+  const { mutate, isLoading } = useMutation(authService.signUpCompany(api), {
     onSuccess: ({ data }) => {
       navigate('/signin');
       notifySuccess('Sign up', data?.message);
@@ -58,72 +51,52 @@ const CompanyForm = () => {
       notifyError('Sign up', data?.data?.message)
   });
 
-  const onSubmit = ({ name, email, password }) => {
+  const onSubmit = ({
+    name,
+    email,
+    password,
+    avatar,
+    background,
+    photos,
+    nif,
+    phone,
+    location
+  }) => {
     const formData = new FormData();
     formData.append('name', name);
     formData.append('email', email);
     formData.append('password', password);
-    if (avatarList.length !== 0)
-      formData.append('avatar', avatarList[0].originFileObj);
-    if (backgroundList.length !== 0)
-      formData.append('background', backgroundList[0].originFileObj);
-    if (photosList.length !== 0)
-      formData.append('photos', photosList[0].originFileObj);
+    formData.append('nif', nif);
+    formData.append('phone', phone);
+    location.forEach((item) => formData.append('location', item));
+    if (avatar.length !== 0) formData.append('avatar', avatar[0].originFileObj);
+    if (background.length !== 0)
+      formData.append('background', background[0].originFileObj);
+    if (photos.length !== 0)
+      photos.forEach((photo) => formData.append('photos', photo.originFileObj));
 
     mutate(formData);
   };
 
-  const onPreview = async (file) => {
-    let src = file.url;
-    if (!src) {
-      src = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file.originFileObj);
-        reader.onload = () => resolve(reader.result);
-      });
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
     }
-    const image = new Image();
-    image.src = src;
-    const imgWindow = window.open(src);
-    imgWindow.document.write(image.outerHTML);
+    setPreviewState({
+      image: file.url || file.preview,
+      isVisible: true,
+      title: file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
+    });
   };
 
-  function MarkerLocation({ location, setLocation }) {
-    const icon = L.icon({
-      iconSize: [25, 41],
-      iconAnchor: [10, 41],
-      popupAnchor: [2, -40],
-      iconUrl: 'https://unpkg.com/leaflet@1.7/dist/images/marker-icon.png',
-      shadowUrl: 'https://unpkg.com/leaflet@1.7/dist/images/marker-shadow.png'
-    });
-
-    useMapEvents({
-      click: (e) => {
-        const { lat, lng } = e.latlng;
-        setLocation([lat, lng]);
-      }
-    });
-
-    return location && <Marker icon={icon} position={location} />;
-  }
-
-  const initialViewMapPosition = [39.7, -8.08];
-
-  const LocationControl = () => {
-    return (
-      <div className="leaflet-bottom leaflet-left">
-        <div className="leaflet-control leaflet-bar">
-          <button style={{ height: '25px', width: '25px' }}>GPS</button>
-        </div>
-      </div>
-    );
-  };
+  const handleCancel = () => setPreviewState({ isVisible: false });
 
   useEffect(() => {
-    console.log(map);
-    // if (map) L.control.locate({ showPopup: false }).addTo(map);
-    // console.log(map);
-  }, [map]);
+    location &&
+      setValue('location', location, {
+        ...(errors?.location?.message && { shouldValidate: true })
+      });
+  }, [location, setValue, errors]);
 
   return (
     <Form
@@ -147,34 +120,77 @@ const CompanyForm = () => {
         error={errors.password}
         type="password"
       />
-      <FormAntd.Item label="Avatar">
-        <ImgCrop shape="round">
-          <Upload
-            onChange={({ fileList }) => setAvatarList([...fileList.slice(-1)])}
-            onPreview={onPreview}
-            customRequest={dummyRequest}
-            listType="picture"
-            fileList={avatarList}
-          >
-            <Button icon={<UploadOutlined />}>Upload</Button>
-          </Upload>
-        </ImgCrop>
-      </FormAntd.Item>
-      <FormAntd.Item label="Background">
-        <ImgCrop>
-          <Upload
-            onChange={({ fileList }) =>
-              setBackgroundList([...fileList.slice(-1)])
-            }
-            onPreview={onPreview}
-            customRequest={dummyRequest}
-            listType="picture"
-            fileList={backgroundList}
-          >
-            <Button icon={<UploadOutlined />}>Upload</Button>
-          </Upload>
-        </ImgCrop>
-      </FormAntd.Item>
+      <Controller
+        control={control}
+        name="avatar"
+        render={({ field: { value } }) => {
+          return (
+            <FormAntd.Item
+              label="Avatar"
+              help={errors?.avatar?.message}
+              hasFeedback
+              tooltip="Max size: 1mb"
+              validateStatus={
+                (value || errors?.avatar) &&
+                (errors?.avatar ? 'error' : 'success')
+              }
+            >
+              <ImgCrop shape="round">
+                <Upload
+                  onChange={({ fileList }) => {
+                    setValue('avatar', [...fileList], {
+                      shouldValidate: true
+                    });
+                  }}
+                  onPreview={handlePreview}
+                  customRequest={dummyRequest}
+                  listType="picture"
+                  fileList={value}
+                  maxCount={1}
+                >
+                  <Button icon={<UploadOutlined />}>Upload</Button>
+                </Upload>
+              </ImgCrop>
+            </FormAntd.Item>
+          );
+        }}
+      />
+
+      <Controller
+        control={control}
+        name="background"
+        render={({ field: { value } }) => {
+          return (
+            <FormAntd.Item
+              label="Background"
+              help={errors?.background?.message}
+              hasFeedback
+              tooltip="Max size: 1mb"
+              validateStatus={
+                (value || errors?.background) &&
+                (errors?.background ? 'error' : 'success')
+              }
+            >
+              <ImgCrop shape="round">
+                <Upload
+                  onChange={({ fileList }) => {
+                    setValue('background', [...fileList], {
+                      shouldValidate: true
+                    });
+                  }}
+                  onPreview={handlePreview}
+                  customRequest={dummyRequest}
+                  listType="picture"
+                  fileList={value}
+                  maxCount={1}
+                >
+                  <Button icon={<UploadOutlined />}>Upload</Button>
+                </Upload>
+              </ImgCrop>
+            </FormAntd.Item>
+          );
+        }}
+      />
 
       <Input name="nif" label="Nif" control={control} error={errors.nif} />
       <Input
@@ -184,37 +200,51 @@ const CompanyForm = () => {
         error={errors.phone}
       />
       <FormAntd.Item label="Location">
-        <MapContainer
-          style={{ width: '100%', height: '300px', borderRadius: '2px' }}
-          center={initialViewMapPosition}
-          zoom={6}
-          minZoom={5}
-          ref={setMap}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}"
-          />
-          <Control position="topleft">
-            <button>G</button>
-          </Control>
-          <MarkerLocation location={location} setLocation={setLocation} />
-        </MapContainer>
+        <SearchMapInput setLocation={setLocation} mapInstance={mapInstance} />
+        <LocationMap
+          location={location}
+          setLocation={setLocation}
+          setMapInstance={setMapInstance}
+        />
+        <div className="ant-form-item-explain-error">
+          {errors?.location?.message}
+        </div>
       </FormAntd.Item>
 
-      <FormAntd.Item label="Photos">
-        <ImgCrop>
-          <Upload
-            onChange={({ fileList }) => setPhotosList([...fileList])}
-            onPreview={onPreview}
-            customRequest={dummyRequest}
-            listType="picture"
-            fileList={photosList}
-          >
-            <Button icon={<UploadOutlined />}>Upload</Button>
-          </Upload>
-        </ImgCrop>
-      </FormAntd.Item>
+      <Controller
+        control={control}
+        name="photos"
+        render={({ field: { value } }) => {
+          return (
+            <FormAntd.Item
+              label="Photos"
+              help={errors?.photos?.message}
+              hasFeedback
+              tooltip="Max size: 1mb"
+              validateStatus={
+                (value || errors?.photos) &&
+                (errors?.photos ? 'error' : 'success')
+              }
+            >
+              <ImgCrop shape="round">
+                <Upload
+                  onChange={({ fileList }) => {
+                    setValue('photos', [...fileList], {
+                      shouldValidate: true
+                    });
+                  }}
+                  onPreview={handlePreview}
+                  customRequest={dummyRequest}
+                  listType="picture"
+                  fileList={value}
+                >
+                  <Button icon={<UploadOutlined />}>Upload</Button>
+                </Upload>
+              </ImgCrop>
+            </FormAntd.Item>
+          );
+        }}
+      />
 
       <Button
         type="primary"
@@ -231,6 +261,14 @@ const CompanyForm = () => {
       <StyledLink className="ant-btn ant-btn-block" to={'/signin'}>
         Sign In
       </StyledLink>
+      <Modal
+        visible={previewState.isVisible}
+        title={previewState.title}
+        footer={null}
+        onCancel={handleCancel}
+      >
+        <img alt="Preview" style={{ width: '100%' }} src={previewState.image} />
+      </Modal>
     </Form>
   );
 };
