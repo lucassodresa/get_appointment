@@ -28,7 +28,7 @@ function App() {
     <Container isLoggedIn={isLoggedIn}>
       <Routes>
         <Route
-          path="/signup"
+          path="/signup/*"
           element={isLoggedIn ? <Navigate to="/" /> : <SignUp />}
         />
         <Route

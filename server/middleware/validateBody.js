@@ -1,8 +1,6 @@
 // libraries
 const { StatusCodes } = require('http-status-codes');
-const fs = require('fs');
-const util = require('util');
-const unlinkFile = util.promisify(fs.unlink);
+const { removeTemporaryFiles } = require('../utils/s3');
 
 const validateBody = (schema) => {
   return async (req, res, next) => {
@@ -11,8 +9,8 @@ const validateBody = (schema) => {
       req.body = validatedBody;
       next();
     } catch ({ errors }) {
-      const file = req.file;
-      if (file) await unlinkFile(file.path);
+      const files = req.files;
+      removeTemporaryFiles(files);
 
       return res
         .status(StatusCodes.BAD_REQUEST)

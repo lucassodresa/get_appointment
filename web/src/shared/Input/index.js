@@ -2,13 +2,14 @@ import { Form, Input as InputAntd } from 'antd';
 import React from 'react';
 import { Controller } from 'react-hook-form';
 
-const Input = ({ name, placeholder, control, error, type = 'text' }) => {
+const Input = ({ name, label, placeholder, control, error, type = 'text' }) => {
   return (
     <Controller
       name={name}
       control={control}
       render={({ field }) => (
         <Form.Item
+          label={label}
           hasFeedback
           validateStatus={
             (field.value || error) && (error ? 'error' : 'success')

@@ -12,11 +12,11 @@ const CompanySchema = new Schema(
     adminId: { type: ObjectId },
     avatar: {
       type: String,
-      get: (avatarId) => getSignedUrl(avatarId)
+      get: (avatarId) => avatarId && getSignedUrl(avatarId)
     },
     background: {
       type: String,
-      get: (backgroundId) => getSignedUrl(backgroundId)
+      get: (backgroundId) => backgroundId && getSignedUrl(backgroundId)
     },
     nif: {
       type: String,

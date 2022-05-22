@@ -46,17 +46,17 @@ const SignIn = () => {
       <Paragraph marginBottom="52px">
         Access the app by entering your credentials
       </Paragraph>
-      <Form onSubmit={handleSubmit(mutate)}>
+      <Form layout="vertical" onFinish={handleSubmit(mutate)}>
         <Input
           name="email"
-          placeholder="Email"
+          label="Email"
           control={control}
           error={errors.email}
         />
 
         <Input
           name="password"
-          placeholder="Password"
+          label="Password"
           control={control}
           error={errors.password}
           type="password"

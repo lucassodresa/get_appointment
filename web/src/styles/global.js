@@ -24,6 +24,12 @@ body {
   animation: ${animationLeft}  0.3s forwards;
 }
 
+.animationRight {
+  opacity: 0;
+  transform: translateX(20px);
+  animation: ${animationLeft}  0.3s forwards;
+}
+
 `;
 
 export default GlobalStyle;

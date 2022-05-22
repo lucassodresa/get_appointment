@@ -4,9 +4,12 @@ import styled from 'styled-components';
 export const StyledSection = styled.section`
   display: flex;
   align-items: center;
-  justify-content: center;
   flex-direction: column;
   height: 100%;
+
+  h1 {
+    margin-top: 80px;
+  }
 `;
 
 export const StyledLink = styled(Link)`

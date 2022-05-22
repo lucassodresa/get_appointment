@@ -32,4 +32,14 @@ const getSignedUrl = (Key) => {
 
 const unlinkFile = util.promisify(fs.unlink);
 
-module.exports = { uploadFile, getSignedUrl, unlinkFile };
+const removeTemporaryFiles = (files) => {
+  if (files) {
+    const fields = Object.keys(files);
+    fields.forEach((field) => {
+      const fieldFiles = files[field];
+      fieldFiles.forEach((file) => unlinkFile(file.path));
+    });
+  }
+};
+
+module.exports = { uploadFile, getSignedUrl, unlinkFile, removeTemporaryFiles };
