@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const { StatusCodes } = require('http-status-codes');
 const UserModel = require('../models/UserModel');
 const { generateToken } = require('../utils/authentication');
-const { uploadFile, unlinkFile } = require('../utils/s3');
+const { uploadFile, unlinkFile, removeTemporaryFiles } = require('../utils/s3');
 const CompanyModel = require('../models/CompanyModel');
 const { sendMail } = require('../utils/mail');
 const {
@@ -13,22 +13,25 @@ require('dotenv').config();
 const { ADMIN_EMAIL } = process.env;
 
 const signUp = async (req, res) => {
+  let body, files;
   try {
-    const body = req.body;
-    const file = req.file;
+    body = req.body;
+    const avatar = body.avatar?.[0];
+    files = req.files;
 
     const alreadyExistUserEmail = await UserModel.findOne({
       email: body.email
     });
     if (alreadyExistUserEmail) {
+      removeTemporaryFiles(files);
       return res
         .status(StatusCodes.CONFLICT)
         .jsend.fail({ message: 'Email already exist.' });
     }
 
-    if (file) {
-      const result = await uploadFile(req.file);
-      await unlinkFile(file.path);
+    if (avatar) {
+      const result = await uploadFile(avatar);
+      await unlinkFile(avatar.path);
 
       if (result.Key) body.avatar = result.Key;
     }
@@ -40,8 +43,7 @@ const signUp = async (req, res) => {
       message: 'User created!'
     });
   } catch (error) {
-    const file = req.file;
-    if (file) await unlinkFile(file.path);
+    removeTemporaryFiles(files);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .jsend.error({ message: error });
@@ -49,9 +51,10 @@ const signUp = async (req, res) => {
 };
 
 const signUpCompany = async (req, res) => {
+  let body, files;
   try {
-    const body = req.body;
-    const files = req.files;
+    body = req.body;
+    files = req.files;
 
     // 1-
     // verify if user already exist and register
@@ -61,6 +64,7 @@ const signUpCompany = async (req, res) => {
       email: body.email
     });
     if (alreadyExistUserEmail) {
+      removeTemporaryFiles(files);
       return res
         .status(StatusCodes.CONFLICT)
         .jsend.fail({ message: 'Email already exist.' });
@@ -72,6 +76,7 @@ const signUpCompany = async (req, res) => {
       nif: body.nif
     });
     if (alreadyExistCompanyNif) {
+      removeTemporaryFiles(files);
       return res
         .status(StatusCodes.CONFLICT)
         .jsend.fail({ message: 'Nif already exist.' });
@@ -80,7 +85,7 @@ const signUpCompany = async (req, res) => {
     // 3- send images to s3 bucket
 
     let uploadAvatarPromise, uploadBackgroundPromise, uploadPhotosPromise;
-    const avatarFile = files?.avatar?.[0];
+    const avatarFile = body?.avatar?.[0];
 
     if (avatarFile) {
       uploadAvatarPromise = uploadFile(avatarFile).then((result) => {
@@ -89,7 +94,7 @@ const signUpCompany = async (req, res) => {
       });
     }
 
-    const backgroundFile = files?.background?.[0];
+    const backgroundFile = body?.background?.[0];
     if (backgroundFile) {
       uploadBackgroundPromise = uploadFile(backgroundFile).then((result) => {
         if (result.Key) body.background = result.Key;
@@ -97,7 +102,7 @@ const signUpCompany = async (req, res) => {
       });
     }
 
-    const photosFileArray = files?.photos;
+    const photosFileArray = body?.photos;
     if (photosFileArray) {
       const uploadPhotosPromisesArray = photosFileArray.map((file) =>
         uploadFile(file)
@@ -128,6 +133,7 @@ const signUpCompany = async (req, res) => {
       name,
       email,
       password,
+      ...(body.avatar && { avatar: body.avatar }),
       role: 3
     });
 
@@ -143,8 +149,6 @@ const signUpCompany = async (req, res) => {
       location: { type: 'Point', coordinates: location },
       ...(body.photos && { photos: body.photos })
     });
-    await user.save();
-    await company.save();
 
     // 6-
     // send email to user and to admin
@@ -165,16 +169,7 @@ const signUpCompany = async (req, res) => {
       message: 'User created!'
     });
   } catch (error) {
-    const files = req.files;
-    const avatarFile = files?.avatar?.[0];
-    const backgroundFile = files?.background?.[0];
-    const photosFileArray = files?.photos;
-
-    if (avatarFile) unlinkFile(avatarFile.path);
-    if (backgroundFile) unlinkFile(backgroundFile.path);
-    if (photosFileArray) {
-      photosFileArray.forEach((photo) => unlinkFile(photo.path));
-    }
+    removeTemporaryFiles(files);
     return res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
       .jsend.error({ message: error });

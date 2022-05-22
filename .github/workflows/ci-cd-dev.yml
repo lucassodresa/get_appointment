@@ -28,15 +28,36 @@ jobs:
 
   cd:
     needs: ci
-    runs-on: ubuntu-latest
+     runs-on: ubuntu-latest
     steps:
+<<<<<<< HEAD
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - uses: akhileshns/heroku-deploy@v3.12.12
+=======
+      - name: Check out repository
+        uses: actions/checkout@v2
+>>>>>>> 35ecf0bca5d91e886de55d5852481fef57cd0f32
         with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: ${{ secrets.HEROKU_APP_NAME_DEV }}
-          heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          branch: 'dev'
+          fetch-depth: 0
+      - name: Heroku login credentials
+        run: |
+          cat > ~/.netrc <<EOF
+            machine api.heroku.com
+              login $HEROKU_EMAIL
+              password $HEROKU_API_KEY
+            machine git.heroku.com
+              login $HEROKU_EMAIL
+              password $HEROKU_API_KEY
+          EOF
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_EMAIL: ${{ secrets.HEROKU_EMAIL }}
+      - name: Add Heroku remote
+        run: heroku git:remote --app $HEROKU_APP_NAME_DEV
+        env:
+          HEROKU_APP_NAME: ${{ secrets.HEROKU_APP_NAME_DEV }}
+      - name: Push to Heroku
+        run: git push heroku master

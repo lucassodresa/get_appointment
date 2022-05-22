@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import { RecoilRoot } from 'recoil';
 import { QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
@@ -8,8 +8,7 @@ import { queryClient } from './services/queryClient';
 import 'antd/dist/antd.css';
 import GlobalStyle from './styles/global';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
@@ -19,5 +18,6 @@ root.render(
         </BrowserRouter>
       </QueryClientProvider>
     </RecoilRoot>
-  </React.StrictMode>
+  </React.StrictMode>,
+  document.getElementById('root')
 );

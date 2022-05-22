@@ -11,10 +11,15 @@ const signUp = (axios) => async (payload) => {
   return res.data;
 };
 
+const signUpCompany = (axios) => async (payload) => {
+  const res = await axios().post('/auth/signup/company', payload);
+
+  return res.data;
+};
 const validateToken = (axios) => async () => {
   const res = await axios().get('/auth/validateToken');
 
   return res.data;
 };
 
-export default { signIn, signUp, validateToken };
+export default { signIn, signUp, signUpCompany, validateToken };
