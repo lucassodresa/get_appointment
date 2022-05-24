@@ -9,16 +9,30 @@ import userService from '../../services/user';
 import { StyledLayout } from './styles';
 import SideNav from '../SideNav';
 import Menu from '../Menu';
+import { getAbility, ROLE_PERMISSIONS_USER } from '../../helpers/permissions';
+import { AbilityContext } from '../../shared/Can';
 
+const { RESOURCES } = ROLE_PERMISSIONS_USER;
 const items = [
-  { to: '/appointments', icon: <CalendarOutlined />, name: 'Appointments' },
-  { to: '/services', icon: <FileSearchOutlined />, name: 'Services' }
+  {
+    name: 'Appointments',
+    to: '/appointments',
+    icon: <CalendarOutlined />,
+    permission: RESOURCES.NAV_APPOINTMENTS
+  },
+  {
+    name: 'Services',
+    to: '/services',
+    icon: <FileSearchOutlined />,
+    permission: RESOURCES.NAV_SERVICES
+  }
 ];
 
 const Layout = () => {
   const { api } = useAxios({ withAuth: true });
   const { data } = useQuery('userInfo', userService.getMe(api));
   const setLoggedUserInfo = useSetRecoilState(loggedUserInfoState);
+  const userRole = getAbility(data?.data?.user?.role);
 
   useEffect(() => {
     data &&
@@ -29,12 +43,14 @@ const Layout = () => {
       });
   }, [data, setLoggedUserInfo]);
   return (
-    <StyledLayout>
-      <SideNav>
-        <Menu items={items} />
-      </SideNav>
-      <Outlet />
-    </StyledLayout>
+    <AbilityContext.Provider value={userRole}>
+      <StyledLayout>
+        <SideNav>
+          <Menu items={items} />
+        </SideNav>
+        <Outlet />
+      </StyledLayout>
+    </AbilityContext.Provider>
   );
 };
 

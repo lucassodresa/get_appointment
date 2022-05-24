@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@casl/ability": "^5.4.3",
+    "@casl/react": "^2.3.0",
     "@get_appointment/shared": "*",
     "@hookform/resolvers": "^2.8.8",
     "antd": "4.20.5",
