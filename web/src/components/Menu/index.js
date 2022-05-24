@@ -8,13 +8,13 @@ const Menu = ({ items }) => {
   return (
     <StyledMenu>
       <StyleMenuTitle>Labels</StyleMenuTitle>
-      {items.map(({ to, icon, name, permission }) => (
-        // <Can key={to} I={ROLE_PERMISSIONS_USER.ACTIONS.SEE} a={permission}>
-        <StyledNavLink key={to} to={to}>
-          {icon}
-          <StyleSpan>{name}</StyleSpan>
-        </StyledNavLink>
-        // </Can>
+      {items?.map(({ to, icon, name, permission }) => (
+        <Can key={to} I={ROLE_PERMISSIONS_USER.ACTIONS.SEE} a={permission}>
+          <StyledNavLink key={to} to={to}>
+            {icon}
+            <StyleSpan>{name}</StyleSpan>
+          </StyledNavLink>
+        </Can>
       ))}
     </StyledMenu>
   );

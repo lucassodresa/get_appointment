@@ -31,26 +31,24 @@ const ADMIN = defineAbility((can) => {
 });
 
 const NORMAL = defineAbility((can) => {
-  can(ACTIONS.ADD, RESOURCES.APPOINTMENT);
-  can(ACTIONS.EDIT, RESOURCES.APPOINTMENT);
-  can(ACTIONS.ADD, RESOURCES.SERVICE);
-  can(ACTIONS.EDIT, RESOURCES.SERVICE);
-
-  //nav
-  can(ACTIONS.SEE, RESOURCES.NAV_APPOINTMENTS);
-  can(ACTIONS.SEE, RESOURCES.NAV_SERVICES);
+  // can(ACTIONS.ADD, RESOURCES.APPOINTMENT);
+  // can(ACTIONS.EDIT, RESOURCES.APPOINTMENT);
+  // can(ACTIONS.ADD, RESOURCES.SERVICE);
+  // can(ACTIONS.EDIT, RESOURCES.SERVICE);
+  // //nav
+  can(ACTIONS.SEE, [RESOURCES.NAV_APPOINTMENTS, RESOURCES.NAV_SERVICES]);
 });
 
 const COMPANY = defineAbility((can) => {
-  can(ACTIONS.SEE, RESOURCES.NAV_ADVERTISEMENTS);
-  can(ACTIONS.SEE, RESOURCES.NAV_SETTINGS);
+  can(ACTIONS.SEE, [RESOURCES.NAV_APPOINTMENTS, RESOURCES.NAV_SERVICES]);
+  // can(ACTIONS.SEE, '');
+  // can(ACTIONS.SEE, '');
 });
 
 const SIGNED_OUT = defineAbility(() => {});
 
 const roles = [SIGNED_OUT, ADMIN, NORMAL, COMPANY];
 
-export const getAbility = (userRole) => {
-  // console.log(roles[userRole]);
-  // return roles[userRole];
+export const getAbility = (userRole = 0) => {
+  return roles[userRole];
 };

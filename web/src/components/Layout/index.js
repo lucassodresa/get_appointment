@@ -17,12 +17,14 @@ const items = [
   {
     name: 'Appointments',
     to: '/appointments',
-    icon: <CalendarOutlined />
+    icon: <CalendarOutlined />,
+    permission: RESOURCES.NAV_APPOINTMENTS
   },
   {
     name: 'Services',
     to: '/services',
-    icon: <FileSearchOutlined />
+    icon: <FileSearchOutlined />,
+    permission: RESOURCES.NAV_SERVICES
   }
 ];
 
@@ -30,19 +32,25 @@ const Layout = () => {
   const { api } = useAxios({ withAuth: true });
   const { data } = useQuery('userInfo', userService.getMe(api));
   const setLoggedUserInfo = useSetRecoilState(loggedUserInfoState);
+  const userRole = getAbility(data?.data?.user?.role);
 
   useEffect(() => {
-    setLoggedUserInfo(data?.data?.user);
+    data &&
+      setLoggedUserInfo((prevState) => {
+        const { user } = data?.data;
+
+        return user;
+      });
   }, [data, setLoggedUserInfo]);
   return (
-    // <AbilityContext.Provider value={getAbility(data?.data?.user?.role)}>
-    <StyledLayout>
-      <SideNav>
-        <Menu items={items} />
-      </SideNav>
-      <Outlet />
-    </StyledLayout>
-    // </AbilityContext.Provider>
+    <AbilityContext.Provider value={userRole}>
+      <StyledLayout>
+        <SideNav>
+          <Menu items={items} />
+        </SideNav>
+        <Outlet />
+      </StyledLayout>
+    </AbilityContext.Provider>
   );
 };
 
