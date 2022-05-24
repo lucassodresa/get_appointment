@@ -9,10 +9,21 @@ import userService from '../../services/user';
 import { StyledLayout } from './styles';
 import SideNav from '../SideNav';
 import Menu from '../Menu';
+import { getAbility, ROLE_PERMISSIONS_USER } from '../../helpers/permissions';
+import { AbilityContext } from '../../shared/Can';
 
+const { RESOURCES } = ROLE_PERMISSIONS_USER;
 const items = [
-  { to: '/appointments', icon: <CalendarOutlined />, name: 'Appointments' },
-  { to: '/services', icon: <FileSearchOutlined />, name: 'Services' }
+  {
+    name: 'Appointments',
+    to: '/appointments',
+    icon: <CalendarOutlined />
+  },
+  {
+    name: 'Services',
+    to: '/services',
+    icon: <FileSearchOutlined />
+  }
 ];
 
 const Layout = () => {
@@ -21,20 +32,17 @@ const Layout = () => {
   const setLoggedUserInfo = useSetRecoilState(loggedUserInfoState);
 
   useEffect(() => {
-    data &&
-      setLoggedUserInfo((prevState) => {
-        const { user } = data?.data;
-
-        return user;
-      });
+    setLoggedUserInfo(data?.data?.user);
   }, [data, setLoggedUserInfo]);
   return (
+    // <AbilityContext.Provider value={getAbility(data?.data?.user?.role)}>
     <StyledLayout>
       <SideNav>
         <Menu items={items} />
       </SideNav>
       <Outlet />
     </StyledLayout>
+    // </AbilityContext.Provider>
   );
 };
 
