@@ -6,14 +6,17 @@ const router = express.Router();
 // imports
 const auth = require('./auth');
 const users = require('./users');
-// const static = require('./static');
+const serviceTypes = require('./serviceTypes');
+const services = require('./services');
+
 // public routes
 router.use('/auth', auth);
-// router.use('/static', static);
 
 router.use(Middleware.validateToken);
 
 // private routes
 router.use('/users', users);
+router.use('/service-types', serviceTypes);
+router.use('/services', services);
 
 module.exports = router;

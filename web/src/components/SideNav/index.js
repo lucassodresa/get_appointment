@@ -1,9 +1,9 @@
 import React from 'react';
 import { Divider } from 'antd';
 
-import useAxios from '../../hooks/useAxios';
+import useAxios from 'hooks/useAxios';
 import { StyledLogoutButton, StyledSider } from './styles';
-import AvatarContainer from '../AvatarContainer';
+import AvatarContainer from 'components/AvatarContainer';
 
 const SideNav = ({ children }) => {
   const { logout } = useAxios({ withAuth: true });

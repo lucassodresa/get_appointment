@@ -1,7 +1,7 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
-import { userRoleSelector } from '../../../recoil/user';
-import Page from '../../../shared/Page';
+import { userRoleSelector } from 'recoil/user';
+import Page from 'shared/Page';
 import { GLOBALS } from '@get_appointment/shared';
 const { ROLES } = GLOBALS.USER;
 

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { loggedUserInfoState } from '../../recoil/user';
+import { loggedUserInfoState } from 'recoil/user';
 
 import { StyledAvatar, StyledAvatarContainer, StyledName } from './styles';
 

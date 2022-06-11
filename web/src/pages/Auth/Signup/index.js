@@ -1,8 +1,8 @@
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { StyledSection } from '../styles';
 import { UserOutlined, DesktopOutlined } from '@ant-design/icons';
-import Title from '../../../shared/Title';
-import Paragraph from '../../../shared/Paragraph';
+import Title from 'shared/Title';
+import Paragraph from 'shared/Paragraph';
 import { Tabs } from 'antd';
 
 import 'react-image-crop/dist/ReactCrop.css';

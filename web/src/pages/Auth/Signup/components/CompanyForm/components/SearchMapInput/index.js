@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import debounce from 'lodash/debounce';
-import { GEOCODER_PROVIDER_URL } from '../../../../../../../constants/global';
+import { GEOCODER_PROVIDER_URL } from 'constants/global';
 import { AutoComplete, Input } from 'antd';
 
 const SearchMapInput = ({ setLocation, mapInstance }) => {

@@ -1,33 +1,20 @@
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SCHEMAS } from '@get_appointment/shared';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import authService from '../../../../../services/auth';
-import {
-  notifyError,
-  notifySuccess
-} from '../../../../../helpers/notifications';
-import useAxios from '../../../../../hooks/useAxios';
-import Input from '../../../../../shared/Input';
-import Button from '../../../../../shared/Button';
-import Form from '../../../../../shared/Form';
-import ImgCrop from 'antd-img-crop';
-import { Upload, Form as FormAntd, Modal } from 'antd';
-import 'react-image-crop/dist/ReactCrop.css';
-import { useState } from 'react';
-import Paragraph from '../../../../../shared/Paragraph';
-import { StyledLink } from '../../../styles';
-import { UploadOutlined } from '@ant-design/icons';
-import { dummyRequest, getBase64 } from '../../../../../constants/global';
+import authService from 'services/auth';
+import { notifyError, notifySuccess } from 'helpers/notifications';
+import useAxios from 'hooks/useAxios';
+import Input from 'shared/Input';
+import Button from 'shared/Button';
+import Form from 'shared/Form';
+import Paragraph from 'shared/Paragraph';
+import ImageInput from 'shared/ImageInput';
+import { StyledLink } from 'pages/Auth/styles';
 
 const UserForm = () => {
   const navigate = useNavigate();
-  const [previewState, setPreviewState] = useState({
-    isVisible: false,
-    image: '',
-    title: ''
-  });
 
   const {
     handleSubmit,
@@ -59,19 +46,6 @@ const UserForm = () => {
     mutate(formData);
   };
 
-  const handlePreview = async (file) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setPreviewState({
-      image: file.url || file.preview,
-      isVisible: true,
-      title: file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
-    });
-  };
-
-  const handleCancel = () => setPreviewState({ isVisible: false });
-
   return (
     <Form
       className="animationLeft"
@@ -79,40 +53,13 @@ const UserForm = () => {
       onFinish={handleSubmit(onSubmit)}
       autoComplete="off"
     >
-      <Controller
+      <ImageInput
         control={control}
         name="avatar"
-        render={({ field: { value } }) => {
-          return (
-            <FormAntd.Item
-              label="Avatar"
-              help={errors?.avatar?.message}
-              hasFeedback
-              tooltip="Max size: 1mb"
-              validateStatus={
-                (value || errors?.avatar) &&
-                (errors?.avatar ? 'error' : 'success')
-              }
-            >
-              <ImgCrop shape="round">
-                <Upload
-                  onChange={({ fileList }) => {
-                    setValue('avatar', [...fileList], {
-                      shouldValidate: true
-                    });
-                  }}
-                  onPreview={handlePreview}
-                  customRequest={dummyRequest}
-                  listType="picture"
-                  fileList={value}
-                  maxCount={1}
-                >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
-                </Upload>
-              </ImgCrop>
-            </FormAntd.Item>
-          );
-        }}
+        label="Avatar"
+        setValue={setValue}
+        error={errors?.avatar}
+        maxCount={1}
       />
 
       <Input name="name" label="Name" control={control} error={errors.name} />
@@ -147,14 +94,6 @@ const UserForm = () => {
       <StyledLink className="ant-btn ant-btn-block" to={'/signin'}>
         Sign In
       </StyledLink>
-      <Modal
-        visible={previewState.isVisible}
-        title={previewState.title}
-        footer={null}
-        onCancel={handleCancel}
-      >
-        <img alt="Preview" style={{ width: '100%' }} src={previewState.image} />
-      </Modal>
     </Form>
   );
 };

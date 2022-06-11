@@ -1,36 +1,28 @@
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SCHEMAS } from '@get_appointment/shared';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import authService from '../../../../../services/auth';
-import {
-  notifyError,
-  notifySuccess
-} from '../../../../../helpers/notifications';
-import useAxios from '../../../../../hooks/useAxios';
-import Input from '../../../../../shared/Input';
-import Button from '../../../../../shared/Button';
-import Form from '../../../../../shared/Form';
-import ImgCrop from 'antd-img-crop';
-import { Upload, Form as FormAntd, Modal } from 'antd';
+import authService from 'services/auth';
+import { notifyError, notifySuccess } from 'helpers/notifications';
+import useAxios from 'hooks/useAxios';
+import Input from 'shared/Input';
+import Button from 'shared/Button';
+import Form from 'shared/Form';
+import { Form as FormAntd } from 'antd';
 import 'react-image-crop/dist/ReactCrop.css';
 import { useEffect, useState } from 'react';
-import Paragraph from '../../../../../shared/Paragraph';
+import Paragraph from 'shared/Paragraph';
 import { StyledLink } from '../../../styles';
-import { UploadOutlined } from '@ant-design/icons';
-import { dummyRequest, getBase64 } from '../../../../../constants/global';
+
 import LocationMap from './components/LocationMap';
 import SearchMapInput from './components/SearchMapInput';
+import ImageInput from 'shared/ImageInput';
 const CompanyForm = () => {
   const navigate = useNavigate();
   const [mapInstance, setMapInstance] = useState(null);
   const [location, setLocation] = useState(null);
-  const [previewState, setPreviewState] = useState({
-    isVisible: false,
-    image: '',
-    title: ''
-  });
+
   const {
     handleSubmit,
     control,
@@ -78,19 +70,6 @@ const CompanyForm = () => {
     mutate(formData);
   };
 
-  const handlePreview = async (file) => {
-    if (!file.url && !file.preview) {
-      file.preview = await getBase64(file.originFileObj);
-    }
-    setPreviewState({
-      image: file.url || file.preview,
-      isVisible: true,
-      title: file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
-    });
-  };
-
-  const handleCancel = () => setPreviewState({ isVisible: false });
-
   useEffect(() => {
     location &&
       setValue('location', location, {
@@ -120,76 +99,22 @@ const CompanyForm = () => {
         error={errors.password}
         type="password"
       />
-      <Controller
+      <ImageInput
         control={control}
         name="avatar"
-        render={({ field: { value } }) => {
-          return (
-            <FormAntd.Item
-              label="Avatar"
-              help={errors?.avatar?.message}
-              hasFeedback
-              tooltip="Max size: 1mb"
-              validateStatus={
-                (value || errors?.avatar) &&
-                (errors?.avatar ? 'error' : 'success')
-              }
-            >
-              <ImgCrop shape="round">
-                <Upload
-                  onChange={({ fileList }) => {
-                    setValue('avatar', [...fileList], {
-                      shouldValidate: true
-                    });
-                  }}
-                  onPreview={handlePreview}
-                  customRequest={dummyRequest}
-                  listType="picture"
-                  fileList={value}
-                  maxCount={1}
-                >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
-                </Upload>
-              </ImgCrop>
-            </FormAntd.Item>
-          );
-        }}
+        label="Avatar"
+        setValue={setValue}
+        error={errors?.avatar}
+        maxCount={1}
       />
 
-      <Controller
+      <ImageInput
         control={control}
         name="background"
-        render={({ field: { value } }) => {
-          return (
-            <FormAntd.Item
-              label="Background"
-              help={errors?.background?.message}
-              hasFeedback
-              tooltip="Max size: 1mb"
-              validateStatus={
-                (value || errors?.background) &&
-                (errors?.background ? 'error' : 'success')
-              }
-            >
-              <ImgCrop shape="round">
-                <Upload
-                  onChange={({ fileList }) => {
-                    setValue('background', [...fileList], {
-                      shouldValidate: true
-                    });
-                  }}
-                  onPreview={handlePreview}
-                  customRequest={dummyRequest}
-                  listType="picture"
-                  fileList={value}
-                  maxCount={1}
-                >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
-                </Upload>
-              </ImgCrop>
-            </FormAntd.Item>
-          );
-        }}
+        label="Background"
+        setValue={setValue}
+        error={errors?.background}
+        maxCount={1}
       />
 
       <Input name="nif" label="Nif" control={control} error={errors.nif} />
@@ -211,39 +136,12 @@ const CompanyForm = () => {
         </div>
       </FormAntd.Item>
 
-      <Controller
+      <ImageInput
         control={control}
         name="photos"
-        render={({ field: { value } }) => {
-          return (
-            <FormAntd.Item
-              label="Photos"
-              help={errors?.photos?.message}
-              hasFeedback
-              tooltip="Max size: 1mb"
-              validateStatus={
-                (value || errors?.photos) &&
-                (errors?.photos ? 'error' : 'success')
-              }
-            >
-              <ImgCrop shape="round">
-                <Upload
-                  onChange={({ fileList }) => {
-                    setValue('photos', [...fileList], {
-                      shouldValidate: true
-                    });
-                  }}
-                  onPreview={handlePreview}
-                  customRequest={dummyRequest}
-                  listType="picture"
-                  fileList={value}
-                >
-                  <Button icon={<UploadOutlined />}>Upload</Button>
-                </Upload>
-              </ImgCrop>
-            </FormAntd.Item>
-          );
-        }}
+        label="Photos"
+        setValue={setValue}
+        error={errors?.photos}
       />
 
       <Button
@@ -261,14 +159,6 @@ const CompanyForm = () => {
       <StyledLink className="ant-btn ant-btn-block" to={'/signin'}>
         Sign In
       </StyledLink>
-      <Modal
-        visible={previewState.isVisible}
-        title={previewState.title}
-        footer={null}
-        onCancel={handleCancel}
-      >
-        <img alt="Preview" style={{ width: '100%' }} src={previewState.image} />
-      </Modal>
     </Form>
   );
 };

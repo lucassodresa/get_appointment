@@ -4,9 +4,9 @@ import { RecoilRoot } from 'recoil';
 import { QueryClientProvider } from 'react-query';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
-import { queryClient } from './services/queryClient';
+import { queryClient } from 'services/queryClient';
 import 'antd/dist/antd.css';
-import GlobalStyle from './styles/global';
+import GlobalStyle from 'styles/global';
 
 ReactDOM.render(
   <React.StrictMode>
