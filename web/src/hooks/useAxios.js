@@ -1,17 +1,18 @@
 import { useCallback } from 'react';
 import axios from 'axios';
 import StatusCodes from 'http-status-codes';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { useMutation } from 'react-query';
-import { clearToken, getToken } from '../helpers/auth';
-import { loggedUserInfoState } from '../recoil/user';
-import authService from '../services/auth';
-import { API_URL } from '../constants/api';
+import { clearToken, getToken } from 'helpers/auth';
+import { loggedUserInfoState } from 'recoil/user';
+import authService from 'services/auth';
+import { API_URL } from 'constants/api';
 
 const useAxios = (props) => {
   const setIsLoggedIn = useSetRecoilState(loggedUserInfoState);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const logout = useCallback(() => {
     setIsLoggedIn(null);
@@ -49,7 +50,7 @@ const useAxios = (props) => {
   const { mutate, isLoading } = useMutation(authService.validateToken(api), {
     onSuccess: () => {
       setIsLoggedIn(true);
-      navigate(-1);
+      navigate(pathname);
     },
     onError: () => logout()
   });

@@ -1,7 +1,7 @@
 import { Form } from 'antd';
 import styled from 'styled-components';
 
-const StyledForm = styled(Form)`
+export const StyledForm = styled(Form)`
   margin-left: auto;
   margin-right: auto;
   max-width: 450px;
@@ -9,4 +9,10 @@ const StyledForm = styled(Form)`
   padding: 20px;
 `;
 
-export default StyledForm;
+export const StyledFormPage = styled(Form)`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Marker, useMapEvents } from 'react-leaflet';
-import { markenIcon } from '@get_appointment/web/src/constants/global';
+import { markenIcon } from 'constants/global';
 
 const MarkerClickLocation = ({ location, setLocation }) => {
   useMapEvents({

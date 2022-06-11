@@ -1,9 +1,12 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
 import { userRoleSelector } from '../../../recoil/user';
-import Page from '../../../shared/Page';
-import { GLOBALS } from '@get_appointment/shared';
-const { ROLES } = GLOBALS.USER;
+// import { GLOBALS } from '@get_appointment/shared';
+import { Route, Routes } from 'react-router-dom';
+import List from './components/List';
+import New from './components/New';
+import ServiceType from './components/New/components/ServiceType';
+// const { ROLES } = GLOBALS.USER;
 
 const Services = () => {
   const userRole = useRecoilValue(userRoleSelector);
@@ -11,10 +14,17 @@ const Services = () => {
   if (!userRole) return null;
 
   return (
-    <Page title="Services">
-      {userRole === ROLES.NORMAL && 'You are a Normal user'}
-      {userRole === ROLES.COMPANY && 'You are a Company user'}
-    </Page>
+    <Routes>
+      <Route element={<List />} index />
+      <Route path="new">
+        <Route index element={<New />} />
+        <Route path="service-type" element={<ServiceType />} />
+      </Route>
+      {/* <Route path="/:serviceId" element={<h1>Edit</h1>} /> */}
+      <Route path="*" element={<h1>No match</h1>} />
+    </Routes>
+    // {userRole === ROLES.NORMAL && 'You are a Normal user'}
+    // {userRole === ROLES.COMPANY && 'You are a Company user'}
   );
 };
 

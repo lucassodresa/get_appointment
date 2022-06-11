@@ -1,12 +1,26 @@
 import React from 'react';
+import Button from '../Button';
+import { StyledHeader, StyledPage, StyledTitle, StyledBody } from './styles';
+import { Tooltip } from 'antd';
 
-import { StyledPage, StyledTitle } from './styles';
-
-const Page = ({ children, title }) => {
+const Page = ({ children, title, actionButtonIcon, action, tooltipText }) => {
   return (
     <StyledPage className="animationLeft">
-      <StyledTitle>{title}</StyledTitle>
-      {children}
+      <StyledHeader>
+        {actionButtonIcon && (
+          <Tooltip title={tooltipText}>
+            <Button
+              style={{ marginLeft: '9px', marginRight: '9px' }}
+              onClick={action}
+              shape="circle"
+            >
+              {actionButtonIcon}
+            </Button>
+          </Tooltip>
+        )}
+        <StyledTitle>{title}</StyledTitle>
+      </StyledHeader>
+      <StyledBody>{children}</StyledBody>
     </StyledPage>
   );
 };

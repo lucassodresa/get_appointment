@@ -1,6 +1,6 @@
 import React from 'react';
-import { Can } from '@get_appointment/web/src/shared/Can';
-import { ROLE_PERMISSIONS_USER } from '../../helpers/permissions';
+import { Can } from 'shared/Can';
+import { ROLE_PERMISSIONS_USER } from 'helpers/permissions';
 
 import { StyledMenu, StyledNavLink, StyleMenuTitle, StyleSpan } from './styles';
 

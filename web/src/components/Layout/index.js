@@ -3,14 +3,14 @@ import { useQuery } from 'react-query';
 import { useSetRecoilState } from 'recoil';
 import { CalendarOutlined, FileSearchOutlined } from '@ant-design/icons';
 import { Outlet } from 'react-router-dom';
-import useAxios from '../../hooks/useAxios';
-import { loggedUserInfoState } from '../../recoil/user';
-import userService from '../../services/user';
+import useAxios from 'hooks/useAxios';
+import { loggedUserInfoState } from 'recoil/user';
+import userService from 'services/user';
 import { StyledLayout } from './styles';
-import SideNav from '../SideNav';
-import Menu from '../Menu';
-import { getAbility, ROLE_PERMISSIONS_USER } from '../../helpers/permissions';
-import { AbilityContext } from '../../shared/Can';
+import SideNav from 'components/SideNav';
+import Menu from 'components/Menu';
+import { getAbility, ROLE_PERMISSIONS_USER } from 'helpers/permissions';
+import { AbilityContext } from 'shared/Can';
 
 const { RESOURCES } = ROLE_PERMISSIONS_USER;
 const items = [

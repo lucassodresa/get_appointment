@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const jsend = require('jsend');
 const cors = require('cors');
 const path = require('path');
+const boolParser = require('express-query-boolean');
 
 const PORT = process.env.PORT || 3001;
 const isProd = process.env.NODE_ENV === 'production';
@@ -20,6 +21,7 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use(cors());
 
 app.use(express.json());
+app.use(boolParser());
 app.use(jsend.middleware);
 app.use('/api', routes);
 

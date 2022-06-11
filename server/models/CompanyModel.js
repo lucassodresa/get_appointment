@@ -9,7 +9,7 @@ const CompanySchema = new Schema(
       type: String,
       required: true
     },
-    adminId: { type: ObjectId },
+    adminId: { type: ObjectId, required: true },
     avatar: {
       type: String,
       get: (avatarId) => avatarId && getSignedUrl(avatarId)

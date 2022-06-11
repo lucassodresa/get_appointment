@@ -3,17 +3,17 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { SCHEMAS } from '@get_appointment/shared';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
-import authService from '../../../services/auth';
+import authService from 'services/auth';
 import { StyledLink, StyledSection } from '../styles';
-import { notifyError, notifySuccess } from '../../../helpers/notifications';
-import useAxios from '../../../hooks/useAxios';
-import Input from '../../../shared/Input';
-import Title from '../../../shared/Title';
-import Paragraph from '../../../shared/Paragraph';
-import Button from '../../../shared/Button';
-import Form from '../../../shared/Form';
-import { setToken } from '../../../helpers/auth';
-import { loggedUserInfoState } from '../../../recoil/user';
+import { notifyError, notifySuccess } from 'helpers/notifications';
+import useAxios from 'hooks/useAxios';
+import Input from 'shared/Input';
+import Title from 'shared/Title';
+import Paragraph from 'shared/Paragraph';
+import Button from 'shared/Button';
+import Form from 'shared/Form';
+import { setToken } from 'helpers/auth';
+import { loggedUserInfoState } from 'recoil/user';
 import { useSetRecoilState } from 'recoil';
 
 const SignIn = () => {

@@ -1,8 +1,12 @@
 import React from 'react';
-import StyledForm from './styles';
+import { StyledFormPage, StyledForm } from './styles';
 
-const Form = ({ children, ...props }) => {
-  return <StyledForm {...props}>{children}</StyledForm>;
+const Form = ({ children, type, ...props }) => {
+  return type === 'page' ? (
+    <StyledFormPage {...props}>{children}</StyledFormPage>
+  ) : (
+    <StyledForm {...props}>{children}</StyledForm>
+  );
 };
 
 export default Form;
