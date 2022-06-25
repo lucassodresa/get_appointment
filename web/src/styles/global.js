@@ -30,6 +30,10 @@ body {
   animation: ${animationLeft}  0.3s forwards;
 }
 
+.sr-only {
+  display: none;
+}
+
 `;
 
 export default GlobalStyle;
