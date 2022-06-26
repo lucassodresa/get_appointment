@@ -29,12 +29,12 @@ const postService = async (req, res) => {
       adminId: user._id
     });
 
-    if (company?.status !== GLOBALS.COMPANY.STATUS.ACTIVE) {
-      removeTemporaryFiles(files);
-      return res.status(StatusCodes.NOT_FOUND).jsend.fail({
-        message: 'Company not found.'
-      });
-    }
+    // if (company?.status !== GLOBALS.COMPANY.STATUS.ACTIVE) {
+    //   removeTemporaryFiles(files);
+    //   return res.status(StatusCodes.NOT_FOUND).jsend.fail({
+    //     message: 'Company not found.'
+    //   });
+    // }
     let uploadPhotosPromise;
     const photosFileArray = body?.photos;
     if (photosFileArray) {
@@ -81,9 +81,67 @@ const getServices = async (req, res) => {
   try {
     // const { active } = req.query;
 
-    const services = await ServiceModel.find({
-      // ...(active !== undefined && { active })
-    });
+    let services;
+
+    if (req._user.role === GLOBALS.USER.ROLES.COMPANY) {
+      const company = await CompanyModel.findOne({ adminId: req._user._id });
+
+      services = await ServiceModel.find({
+        companyId: company.id
+        // ...(active !== undefined && { active })
+      });
+    } else {
+      let filter, polygon;
+      filter = req.query?.filter;
+      if (filter) filter = JSON.parse(filter);
+
+      if (filter?.polygon) polygon = filter.polygon;
+
+      // {
+      //   location:{
+      //  $geoWithin : {
+      //    $geometry : {
+      //      type:"Polygon",
+      //      coordinates:[
+      //          [
+      //              [41.16670123027752, -8.680572509765627],
+      //              [41.1149259123417, -8.647613525390627],
+      //              [41.139783165945204, -8.581695556640627],
+      //              [41.16670123027752, -8.680572509765627]
+      //          ]
+      //      ]
+      //     }
+      //   }
+      // }
+      // }
+
+      const aggregations = [
+        {
+          $lookup: {
+            from: 'companies',
+            localField: 'companyId',
+            foreignField: '_id',
+            as: 'company'
+          }
+        },
+        { $unwind: { path: '$company' } }
+      ];
+      polygon &&
+        aggregations.push({
+          $match: {
+            'company.location': {
+              $geoWithin: {
+                $geometry: {
+                  type: 'Polygon',
+                  coordinates: [polygon]
+                }
+              }
+            }
+          }
+        });
+
+      services = await ServiceModel.aggregate(aggregations);
+    }
 
     if (!services.length) {
       return res

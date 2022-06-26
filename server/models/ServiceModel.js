@@ -12,7 +12,7 @@ const ServiceSchema = new Schema(
       type: String,
       required: true
     },
-    companyId: { type: ObjectId },
+    companyId: { type: ObjectId, ref: 'Company' },
     typeId: { type: ObjectId },
 
     photos: {

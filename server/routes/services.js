@@ -3,7 +3,7 @@ const { SCHEMAS } = require('@get_appointment/shared');
 const ServiceController = require('../controllers/ServiceController');
 const Middleware = require('../middleware');
 const {
-  isAdminOrCompanyUser,
+  // isAdminOrCompanyUser,
   isCompanyUser
   // isAdminUser
 } = require('../middleware');
@@ -21,7 +21,7 @@ router.post(
   Middleware.validateBody(SCHEMAS.SERVICE.CREATE),
   ServiceController.postService
 );
-router.get('/', isAdminOrCompanyUser, ServiceController.getServices);
+router.get('/', ServiceController.getServices);
 // router.patch('/', isAdminUser, ServiceTypeController.postServiceType);
 
 module.exports = router;
