@@ -179,31 +179,26 @@ const signUpCompany = async (req, res) => {
 const signIn = async (req, res) => {
   try {
     const body = req.body;
-
     const user = await UserModel.findOne({ email: body.email }).select(
       '+password'
     );
 
-    if (!user) {
+    if (!user)
       return res
         .status(StatusCodes.NOT_FOUND)
         .jsend.fail({ message: 'Email not found.' });
-    }
 
-    if (!user.active) {
+    if (!user.active)
       return res
         .status(StatusCodes.FORBIDDEN)
         .jsend.fail({ message: 'User inactive.' });
-    }
 
-    if (!(await bcrypt.compare(body.password, user.password))) {
+    if (!(await bcrypt.compare(body.password, user.password)))
       return res
         .status(StatusCodes.FORBIDDEN)
         .jsend.fail({ message: 'Wrong credentials.' });
-    }
 
     user.password = undefined;
-
     const token = generateToken({ id: user.id }, '8h');
 
     return res.status(StatusCodes.OK).jsend.success({

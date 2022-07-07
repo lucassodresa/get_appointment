@@ -22,7 +22,7 @@ const { Meta } = Card;
 const User = () => {
   const { api } = useAxios({ withAuth: true });
   const [showMap, setShowMap] = useState(false);
-  const [polygon, setPolygon] = useState(null);
+  const [polygon, setPolygon] = useState([]);
   const [services, setServices] = useState([]);
   const { mutate } = useMutation('services', serviceService.getServices(api), {
     onSuccess: ({ data: { services } }) => {
@@ -61,8 +61,8 @@ const User = () => {
           // whenCreated={setMapInstance}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="http://mt0.google.com/vt/lyrs=m&hl=en&x={x}&y={y}&z={z}"
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
           <FeatureGroup>
             <EditControl

@@ -37,11 +37,8 @@ function App() {
         />
         <Route path="/" element={<ProtectedRoute />}>
           <Route index element={<Navigate to="/appointments" />} />
-
           <Route path="appointments/*" element={<Appointments />} />
-
           <Route path="services/*" element={<Services />} />
-
           <Route path="profile/*" element={<Profile />} />
         </Route>
         <Route path="*" element={<Navigate to="/" />} />

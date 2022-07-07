@@ -140,10 +140,19 @@ const getServices = async (req, res) => {
           }
         });
 
-      services = await ServiceModel.aggregate(aggregations);
+      services = (await ServiceModel.aggregate(aggregations)).map((service) => {
+        const { company } = service;
+        const newCompany = CompanyModel.hydrate(company);
+        return ServiceModel.hydrate({
+          ...service,
+          company: newCompany
+        });
+      });
+
+      // services = services;
     }
 
-    if (!services.length) {
+    if (!services?.length) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .jsend.fail({ message: 'services not founded' });
